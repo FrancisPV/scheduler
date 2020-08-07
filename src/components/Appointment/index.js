@@ -1,15 +1,20 @@
 import React from "react";
 import "components/Appointment/styles.scss"
-import Header from "components/Appointment/Header"
 import Empty from "components/Appointment/Empty"
 import Show from "components/Appointment/Show"
 import useVisualMode from "../../hooks/useVisualMode"
 import Form from "components/Appointment/Form"
+import Saving from "components/Appointment/Saving"
+import Deleting from "components/Appointment/Deleting"
+import Confirm from "components/Appointment/Confirm"
 
 
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
 const CREATE = "CREATE"
+const SAVING = "SAVING"
+const DELETING = "DELETING"
+const CONFIRM = "CONFIRM"
 
 export default function Appointment(props) {
   const interviewers = props.interviewers || [];
@@ -22,22 +27,36 @@ export default function Appointment(props) {
       student: name,
       interviewer
     };
-    bookInterview(props.id, interview);
-    transition(SHOW)
+    transition(SAVING)
+    bookInterview(props.id, interview)
+    .then(() => transition(SHOW));
   };
 
   const cancel = () => {
     back(EMPTY)
   };
 
+  const cancelInterview = props.cancelInterview;
+
+  const deleteCallback = () => {
+    transition(DELETING)
+    cancelInterview(props.id)
+    .then(() => transition(EMPTY));
+  };
+
+
   return (
     <>
+      {mode === CONFIRM && <Confirm onConfirm={deleteCallback} onCancel={() => transition(SHOW)} />}
+      {mode === SAVING && <Saving />}
+      {mode === DELETING && <Deleting />}
       {mode === EMPTY && <Empty onAdd={() => transition(CREATE)} />}
 
       {mode === SHOW && (
         <Show
           student={props.interview ? props.interview.student : 'test'}
           interviewer={props.interview ? props.interview.interviewer.name : 'test'}
+          onDelete={() => transition(CONFIRM) }
         />
       )
       }
