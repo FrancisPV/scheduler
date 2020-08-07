@@ -9,12 +9,14 @@ import Deleting from "components/Appointment/Deleting"
 import Confirm from "components/Appointment/Confirm"
 
 
+
 const EMPTY = "EMPTY";
 const SHOW = "SHOW";
-const CREATE = "CREATE"
-const SAVING = "SAVING"
-const DELETING = "DELETING"
-const CONFIRM = "CONFIRM"
+const CREATE = "CREATE";
+const SAVING = "SAVING";
+const DELETING = "DELETING";
+const CONFIRM = "CONFIRM";
+const EDIT = "EDIT";
 
 export default function Appointment(props) {
   const interviewers = props.interviewers || [];
@@ -47,6 +49,7 @@ export default function Appointment(props) {
 
   return (
     <>
+      {mode === EDIT && <Form  />}
       {mode === CONFIRM && <Confirm onConfirm={deleteCallback} onCancel={() => transition(SHOW)} />}
       {mode === SAVING && <Saving />}
       {mode === DELETING && <Deleting />}
@@ -56,7 +59,8 @@ export default function Appointment(props) {
         <Show
           student={props.interview ? props.interview.student : 'test'}
           interviewer={props.interview ? props.interview.interviewer.name : 'test'}
-          onDelete={() => transition(CONFIRM) }
+          onDelete={() => transition(CONFIRM)}
+          onEdit={() => transition(CREATE)}
         />
       )
       }
