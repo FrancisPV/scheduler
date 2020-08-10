@@ -27,15 +27,19 @@ export default function Application(props) {
       [id]: appointment
     };
     return axios.put(`/api/appointments/${id}`, { interview })
-      .then(setState({
-        ...state,
-        appointments
-      }));
-    
+      .then(() => {
+        // fetch days
+        return fetchDaysFromAPI().then(() => {
+          setState( prev => ({
+            ...prev,
+            appointments
+          }))
+        })
+      });
   }
 
-  const cancelInterview = function (id) {
-     const appointment = {
+  const cancelInterview = function(id) {
+    const appointment = {
       ...state.appointments[id],
       interview: null
     };
@@ -44,11 +48,15 @@ export default function Application(props) {
       ...state.appointments,
       [id]: appointment
     };
-   return axios.delete(`/api/appointments/${id}`)
-    .then(setState({
-      ...state,
-      appointments
-    }))
+    return axios.delete(`/api/appointments/${id}`)
+      .then(() => {
+        return fetchDaysFromAPI().then(() => {
+          setState( prev => ({
+            ...prev,
+            appointments
+          }))
+        })
+      })
   }
 
   const appointments = getAppointmentsForDay(state, state.day);
@@ -90,6 +98,15 @@ export default function Application(props) {
       setState(prev => ({ ...prev, days: all[0].data, appointments: all[1].data, interviewers: all[2].data }));
     });
   }, [])
+
+  const fetchDaysFromAPI = function() {
+   return axios.get(URL1)
+      .then((response) => {
+        console.log(response.data)
+        setState(prev => ({ ...prev, days: response.data }))
+      }
+      )
+  }
 
 
 
