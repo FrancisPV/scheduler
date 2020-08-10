@@ -7,6 +7,7 @@ import Form from "components/Appointment/Form"
 import Saving from "components/Appointment/Saving"
 import Deleting from "components/Appointment/Deleting"
 import Confirm from "components/Appointment/Confirm"
+import Error from "components/Appointment/Error"
 
 
 
@@ -17,6 +18,8 @@ const SAVING = "SAVING";
 const DELETING = "DELETING";
 const CONFIRM = "CONFIRM";
 const EDIT = "EDIT";
+const ERROR_SAVE = "ERROR_SAVE"
+const ERROR_DELETE ="ERROR_SAVE"
 
 export default function Appointment(props) {
   const interviewers = props.interviewers || [];
@@ -31,7 +34,8 @@ export default function Appointment(props) {
     };
     transition(SAVING)
     bookInterview(props.id, interview)
-    .then(() => transition(SHOW));
+    .then(() => transition(SHOW))
+    .catch(error => transition(ERROR_SAVE, true));
   };
 
   const cancel = () => {
@@ -41,15 +45,18 @@ export default function Appointment(props) {
   const cancelInterview = props.cancelInterview;
 
   const deleteCallback = () => {
-    transition(DELETING)
+    transition(DELETING, true)
     cancelInterview(props.id)
-    .then(() => transition(EMPTY));
+    .then(() => transition(EMPTY))
+    .catch(error => transition(ERROR_DELETE, true));
   };
 
 
   return (
     <>
-      {mode === EDIT && <Form  />}
+      {mode === ERROR_DELETE && <Error message="could not delete the appointment" onClose={() => transition(SHOW)} />}
+      {mode === ERROR_SAVE && <Error message="could not save the appointment" onClose={() => transition(SHOW)} />}
+      {mode === EDIT && <Form  name={props.interview.student} interviewers={props.interviewers} interviewer={props.interview.interviewer.id} />}
       {mode === CONFIRM && <Confirm onConfirm={deleteCallback} onCancel={() => transition(SHOW)} />}
       {mode === SAVING && <Saving />}
       {mode === DELETING && <Deleting />}
@@ -60,11 +67,11 @@ export default function Appointment(props) {
           student={props.interview ? props.interview.student : 'test'}
           interviewer={props.interview ? props.interview.interviewer.name : 'test'}
           onDelete={() => transition(CONFIRM)}
-          onEdit={() => transition(CREATE)}
+          onEdit={() => transition(EDIT)}
         />
       )
       }
-      {mode === CREATE && <Form name={interviewers.name} interviewers={interviewers} onSave={save} onCancel={cancel} />}
+      {mode === CREATE && <Form  interviewers={interviewers} onSave={save} onCancel={cancel} />}
     </>
   );
 }
