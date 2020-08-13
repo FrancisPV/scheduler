@@ -1,4 +1,5 @@
 # Interview Scheduler
+Scheduler is a react application that let you take appointments with various mentors. 
 
 ## Screenshots
 ![appointment-form](https://github.com/FrancisPV/scheduler/blob/master/docs/appointment-form.png?raw=true)
