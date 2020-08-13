@@ -1,5 +1,10 @@
 # Interview Scheduler
 
+## Screenshots
+![appointment-form](https://github.com/FrancisPV/scheduler/blob/master/docs/appointment-form.png?raw=true)
+
+![appointment-delete-form](https://github.com/FrancisPV/scheduler/blob/master/docs/appointment-delete.png?raw=true)
+
 ## Setup
 
 Install dependencies with `npm install`.
